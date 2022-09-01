@@ -1,0 +1,58 @@
+# ワークフローの名前
+name: CI flow for Amazon ECS
+
+# pushしたときに実行
+on: [push]
+
+# 環境変数の設定
+env:
+  SLACK_WEBHOOK: https://hooks.slack.com/services/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
+
+# ジョブの設定
+jobs:
+  ci:
+    # ジョブの名前
+    name: ci
+    # イメージの指定
+    runs-on: ubuntu-latest
+    # タイムアウトの設定（永遠にクレジットを消費するのを防ぐため）
+    timeout-minutes: 10
+
+    # workflow内のリポジトリをコンテナ内にcheckout
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    # 単体テストを実行する
+    - name: Unit Test
+      run: cd ${{ github.workspace }}
+      run: cd sample-webapp && npm install && npm run test:unit
+    
+    # TODO add tests for backend and restapi
+
+    # 成功時のメッセージ
+    - name: Success
+      uses: rtCamp/actions-slack-notify@2.0.2
+      if: success()
+      env:
+        SLACK_TITLE: CI flow / success
+        SLACK_COLOR: good
+        SLACK_MESSAGE: Message for success
+
+    # 失敗時のメッセージ
+    - name: Failure
+      uses: rtCamp/actions-slack-notify@2.0.2
+      if: failure()
+      env:
+        SLACK_TITLE: CI flow / failure
+        SLACK_COLOR: danger
+        SLACK_MESSAGE: Message for failure
+
+    # キャンセル時のメッセージ（タイムアウト時）
+    - name: Cancel
+      uses: rtCamp/actions-slack-notify@2.0.2
+      if: cancelled()
+      env:
+        SLACK_TITLE: CI flow / cancel
+        SLACK_COLOR: danger
+        SLACK_MESSAGE: Message for cancel
