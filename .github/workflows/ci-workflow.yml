@@ -6,7 +6,8 @@ on: [push]
 
 # 環境変数の設定
 env:
-  SLACK_WEBHOOK: https://hooks.slack.com/services/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
+  SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
 # ジョブの設定
 jobs:
