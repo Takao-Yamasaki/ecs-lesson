@@ -47,7 +47,7 @@ jobs:
     # ECRの認証情報を取得する
     - name: Login to ECR
       id: login-ecr
-      uses: aws-actions/action-ecr-login@v1
+      uses: aws-actions/amazon-ecr-login@v1
     
     # webappのビルドとプッシュを行う
     - name: webapp push to ECR
